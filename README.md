@@ -9,16 +9,16 @@ Go to project folder.
 Run instructions:
 
 ```bash
-$ sbt assembly
-$ docker build -f ./Dockerfile . -t shop
-$ docker run -v ~/shop:/opt/app/triggerise -it shop
+sbt assembly
+docker build -f ./Dockerfile . -t shop
+docker run -v ~/shop:/opt/app/triggerise -it shop
 ```
 
 ## Test program
 To test the program do:
 
 ```bash
-$ sbt test
+sbt test
 ```
 
 ## Requisites
