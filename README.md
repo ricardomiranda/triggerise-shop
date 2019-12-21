@@ -1,6 +1,7 @@
 # Triggerise shop
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/09acde1e82d246679e3d89622e5c0c68)](https://www.codacy.com/manual/mail_62/triggerise-shop?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ricardomiranda/triggerise-shop&amp;utm_campaign=Badge_Grade)
 
 ## Run program
 Clone the project to your machine.
