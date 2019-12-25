@@ -1,0 +1,9 @@
+{
+  "products": [
+    {
+      "code": "TICKET",
+      "name": "Triggerise Ticket",
+      "price": 5.00
+    }
+  ]
+}
