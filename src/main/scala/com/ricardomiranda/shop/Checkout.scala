@@ -14,7 +14,6 @@ case class Checkout(items: Seq[String] = Seq(), products: Products) {
   /** Method to add an item to shopping list
    */
   def scan(item: String): Checkout = {
-    
     this.isValidProduct(item) match {
       case true => this.copy(items = item +: items)
       case false => this
@@ -23,7 +22,7 @@ case class Checkout(items: Seq[String] = Seq(), products: Products) {
 
   /** Method to compute the account total
    */
-  def total: Double = ???
+  // def total: Double = ???
 
   /** Returns the Set[String] of products available ont the Triggerise's shop
    */
