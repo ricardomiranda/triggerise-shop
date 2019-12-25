@@ -2,11 +2,10 @@ package com.ricardomiranda.shop
 
 import com.typesafe.scalalogging.StrictLogging
 import spray.json.DefaultJsonProtocol
+import spray.json._
 
 
 object ProductsOnSale extends DefaultJsonProtocol with StrictLogging {
-
-  import spray.json._
 
   implicit val productFormat: RootJsonFormat[Product] = jsonFormat3(Product)
   implicit val productsFormat: RootJsonFormat[Products] = jsonFormat1(Products)
