@@ -1,8 +1,8 @@
 package com.ricardomiranda.shop
 
 import com.typesafe.scalalogging.StrictLogging
-import spray.json.DefaultJsonProtocol
 import spray.json._
+import DefaultJsonProtocol._
 
 
 object ProductsOnSale extends DefaultJsonProtocol with StrictLogging {
