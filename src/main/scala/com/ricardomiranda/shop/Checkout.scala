@@ -9,10 +9,41 @@ case class Products(products: Seq[Product])
 case class Product(code: String, name: String, price: Double) 
 
 
-case class Checkout(products: Products)
+case class Checkout(items: Seq[String] = Seq(), products: Products) {
+
+  /** Method to add an item to shopping list
+   */
+  def scan(item: String): Checkout = {
+    
+    this.isValidProduct(item) match {
+      case true => this.copy(items = item +: items)
+      case false => this
+    }
+  }
+
+  /** Method to compute the account total
+   */
+  def total: Double = ???
+
+  /** Returns the Set[String] of products available ont the Triggerise's shop
+   */
+  val availableProducts: Set[String] = this.products.products.map(_.code.trim.toUpperCase).toSet
+
+
+  /** Returns a predicate wether a products is available in Triggerise's shop
+   */
+  val isValidProduct: String => Boolean = (product) => this.availableProducts.contains(product.trim.toUpperCase)
+}
 
 object Checkout extends StrictLogging {
+
+  /** Checkout constructor from a configuration file
+    *
+    * @param pricing_rules The file path of the configuration.
+    * @return Checkout
+    */
   def apply(pricing_rules: String): Checkout = {
+    logger.info(s"Creating a Checkout object form config file - ${pricing_rules}")
     new Checkout(products = this.convertConfigFileContentsToObject(configurationFilePath = pricing_rules))
   }
 
@@ -25,25 +56,10 @@ object Checkout extends StrictLogging {
     * @return Some(Products) if the file path exists or None if not.
     */
   def convertConfigFileContentsToObject(configurationFilePath: String): Products = {
-    logger.info(s"Converting config file - $configurationFilePath - to Products object")
+    logger.info(s"Converting config file - ${configurationFilePath} - to Products object")
     Core.getFileContents(filePath = configurationFilePath)
       .get
       .parseJson
       .convertTo[Products]
   }
-
-  /** Method to create a Set[String] of the products on the Triggerise's shop
-   * 
-   * @param products the Seq of products on Triggerise's shop
-   * @return Set[String] whith the code of products
-   */
-  def availableProducts(products: Seq[Product]): Set[String] = products.map(_.code.trim.toUpperCase).toSet
-
-  /** Method that validates if a product is available on Triggerise's shop
-   * 
-   * @param product Code of product to be checked
-   * @param products the Set[String] of products on Triggerise's shop
-   * @return Boolean True if product is available for sale
-   */
-  def isValidProduct(product: String, products: Set[String]): Boolean = products.contains(product.trim.toUpperCase)
 }
