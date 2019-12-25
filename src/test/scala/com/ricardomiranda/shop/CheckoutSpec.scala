@@ -57,7 +57,6 @@ class CheckoutSpec extends WordSpec with Matchers {
     "convert an existing json config file with no products to Products object with no products" in {
       val actual: Products = Checkout.convertConfigFileContentsToObject(
         configurationFilePath = getClass.getResource("/products_empty.json").getPath)
-
       val expected: Products = testProductsEmpty
       assert(expected.equals(actual))
     }
@@ -65,7 +64,6 @@ class CheckoutSpec extends WordSpec with Matchers {
     "convert an existing json config file with 1 product to Products object with 1 product" in {
       val actual: Products = Checkout.convertConfigFileContentsToObject(
         configurationFilePath = getClass.getResource("/products_1.json").getPath)
-
       val expected: Products = testProducts1
       assert(expected.equals(actual))
     }
@@ -73,7 +71,6 @@ class CheckoutSpec extends WordSpec with Matchers {
     "convert an existing json config file with 2 products to Products object with 2 products" in {
       val actual: Products = Checkout.convertConfigFileContentsToObject(
         configurationFilePath = getClass.getResource("/products_2.json").getPath)
-
       val expected: Products = testProducts2
       assert(expected.equals(actual))
     }
@@ -81,7 +78,6 @@ class CheckoutSpec extends WordSpec with Matchers {
     "convert an existing json config file with 3 products to Products object with 3 products" in {
       val actual: Products = Checkout.convertConfigFileContentsToObject(
         configurationFilePath = getClass.getResource("/products_3.json").getPath)
-
       val expected: Products = testProducts3
       assert(expected.equals(actual))
     }
@@ -90,21 +86,18 @@ class CheckoutSpec extends WordSpec with Matchers {
   "availableProducts" should {
     "create an empty set with a empty sequence of Products" in {
       val actual: Set[String] = Checkout.availableProducts(products = testProductsEmpty.products)
-
       val expected: Set[String] = Set()
       assert(expected.equals(actual))
     }
 
     "create an sequence with 1 element from a unitary sequence of Products" in {
       val actual: Set[String] = Checkout.availableProducts(products = testProducts1.products)
-
       val expected: Set[String] = Set("TICKET")
       assert(expected.equals(actual))
     }
 
     "create an sequence with 3 elements from a sequence of 3 Products" in {
       val actual: Set[String] = Checkout.availableProducts(products = testProducts3.products)
-
       val expected: Set[String] = Set("TICKET", "HAT", "HOODIE")
       assert(expected.equals(actual))
     }
@@ -137,6 +130,14 @@ class CheckoutSpec extends WordSpec with Matchers {
        val validProducts: Set[String] =  Checkout.availableProducts(products = testProducts3.products)
        val actual: Boolean =  Checkout.isValidProduct(product = product, products = validProducts)
        assert(actual)       
+     }
+   }
+
+   "Checkout constructor" should {
+     "Create a checkout object with no products from emprty data file" in {
+       val actual: Seq[Product] = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath).products.products
+       val expected: Seq[Product] = testProductsEmpty.products
+      assert(expected.equals(actual))
      }
    }
 }
