@@ -15,5 +15,12 @@
       "name": "Triggierse Hat",
       "price": 7.50
     }
-  ]
+  ],
+  "billingType": {
+    "regular": [
+      "TICKET",
+      "HOODIE",
+      "HAT"
+    ]
+  }
 }

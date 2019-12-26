@@ -5,5 +5,10 @@
       "name": "Triggerise Ticket",
       "price": 5.00
     }
-  ]
+  ],
+  "billingType": {
+    "regular": [
+      "TICKET"
+    ]
+  }
 }
