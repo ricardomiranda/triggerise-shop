@@ -10,5 +10,11 @@
       "name": "Triggerise Hoodie",
       "price": 20.00
     }
-  ]
+  ],
+  "billingType": {
+    "regular": [
+      "TICKET",
+      "HOODIE"
+    ]
+  }
 }
