@@ -102,21 +102,21 @@ class CheckoutSpec extends WordSpec with Matchers {
 
   "availableProducts" should {
     "create an empty set with a empty sequence of Products" in {
-      val products: Seq[Product] = testProductsEmpty._1
+      val (products: Seq[Product], _) = testProductsEmpty
       val actual: Set[String] = Checkout(products = products).availableProducts
       val expected: Set[String] = Set()
       assert(expected.equals(actual))
     }
 
     "create an sequence with 1 element from a unitary sequence of Products" in {
-      val products: Seq[Product] = testProducts1._1
+      val (products: Seq[Product], _) = testProducts1
       val actual: Set[String] = Checkout(products = products).availableProducts
       val expected: Set[String] = Set("TICKET")
       assert(expected.equals(actual))
     }
 
     "create an sequence with 3 elements from a sequence of 3 Products" in {
-      val products: Seq[Product] = testProducts3._1
+      val (products: Seq[Product], _) = testProducts3
       val actual: Set[String] = Checkout(products = products).availableProducts
       val expected: Set[String] = Set("TICKET", "HAT", "HOODIE")
       assert(expected.equals(actual))
@@ -126,7 +126,7 @@ class CheckoutSpec extends WordSpec with Matchers {
   "validProduct" should {
     "Be false if both empty" in {
       val product: String = ""
-      val products: Seq[Product] = testProductsEmpty._1
+      val (products: Seq[Product], _) = testProductsEmpty
       val checkout: Checkout = Checkout(products = products)
       val actual: Boolean = checkout.isValidProduct(product)
       assert(!actual)
@@ -134,7 +134,7 @@ class CheckoutSpec extends WordSpec with Matchers {
 
     "Be false if Triggerise's shop has no products" in {
       val product: String = "HAT"
-      val products: Seq[Product] = testProductsEmpty._1
+      val (products: Seq[Product], _) = testProductsEmpty
       val checkout: Checkout = Checkout(products = products)
       val actual: Boolean = checkout.isValidProduct(product)
       assert(!actual)
@@ -142,7 +142,7 @@ class CheckoutSpec extends WordSpec with Matchers {
 
     "Be false if Triggerise's shop has other products" in {
       val product: String = "HAT"
-      val products: Seq[Product] = testProducts1._1
+      val (products: Seq[Product], _) = testProducts1
       val checkout: Checkout = Checkout(products = products)
       val actual: Boolean = checkout.isValidProduct(product)
       assert(!actual)
@@ -150,7 +150,7 @@ class CheckoutSpec extends WordSpec with Matchers {
 
     "Be true if Triggerise's shop has the product" in {
       val product: String = "HAT"
-      val products: Seq[Product] = testProducts3._1
+      val (products: Seq[Product], _) = testProducts3
       val checkout: Checkout = Checkout(products = products)
       val actual: Boolean = checkout.isValidProduct(product)
       assert(actual)
@@ -194,7 +194,7 @@ class CheckoutSpec extends WordSpec with Matchers {
   "scan" should {
     "Add no item to shopping cart if shop has no products and item is empty String" in {
       val item: String = ""
-      val products: Seq[Product] = testProductsEmpty._1
+      val (products: Seq[Product], _) = testProductsEmpty
       val checkout: Checkout = Checkout(products = products).scan(item)
       val actual: Seq[String] = checkout.items
       val expected: Seq[String] = Seq()
@@ -203,7 +203,7 @@ class CheckoutSpec extends WordSpec with Matchers {
 
     "Add no item to shopping cart if shop has no products" in {
       val item: String = "HAT"
-      val products: Seq[Product] = testProductsEmpty._1
+      val (products: Seq[Product], _) = testProductsEmpty
       val checkout: Checkout = Checkout(products = products).scan(item)
       val actual: Seq[String] = checkout.items
       val expected: Seq[String] = Seq()
@@ -212,7 +212,7 @@ class CheckoutSpec extends WordSpec with Matchers {
 
     "Add one item to shopping cart if shop has that product" in {
       val item: String = "TICKET"
-      val products: Seq[Product] = testProducts1._1
+      val (products: Seq[Product], _) = testProducts1
       val checkout: Checkout = Checkout(products = products).scan(item)
       val actual: Seq[String] = checkout.items
       val expected: Seq[String] = Seq(item)
@@ -221,7 +221,7 @@ class CheckoutSpec extends WordSpec with Matchers {
 
     "Add no item to shopping cart if shop does not have that product" in {
       val item: String = "HAT"
-      val products: Seq[Product] = testProducts1._1
+      val (products: Seq[Product], _) = testProducts1
       val checkout: Checkout = Checkout(products = products).scan(item)
       val actual: Seq[String] = checkout.items
       val expected: Seq[String] = Seq()
@@ -231,7 +231,7 @@ class CheckoutSpec extends WordSpec with Matchers {
     "Add four items to shopping cart" in {
       val ticket: String = "TICKET"
       val hat: String = "HAT"
-      val products: Seq[Product] = testProducts3._1
+      val (products: Seq[Product], _) = testProducts3
       val checkout: Checkout = Checkout(products = products).scan(ticket).scan(hat).scan(hat).scan(ticket)
       val actual: Seq[String] = checkout.items
       val expected: Seq[String] = Seq(ticket, hat, hat, ticket)
