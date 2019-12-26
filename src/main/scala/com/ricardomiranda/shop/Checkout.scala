@@ -9,15 +9,28 @@ case class Products(products: Seq[Product])
 case class Product(code: String, name: String, price: Double) 
 
 
-case class Checkout(items: Seq[String] = Seq(), products: Products) {
+case class Checkout(items: Seq[String] = Seq(), products: Products) extends StrictLogging {
 
   /** Method to add an item to shopping list
    */
   def scan(item: String): Checkout = {
     this.isValidProduct(item) match {
-      case true => this.copy(items = item +: items)
-      case false => this
+      case true =>
+        logger.info(s"Item ${item} added to shopping kart")
+        this.copy(items = item +: items)
+      case false =>
+        logger.info(s"Item ${item} was not added to shopping kart")
+        this
     }
+  }
+
+  /** Method to start a new bill
+   *
+   * @return Checkout Empties chopping kart so that a new billing process is possible
+   */
+  def resetBasket: Checkout = {
+    logger.info(s"New empty shopping kart")
+    this.copy(items = Seq())
   }
 
   /** Method to compute the account total
@@ -26,7 +39,7 @@ case class Checkout(items: Seq[String] = Seq(), products: Products) {
 
   /** Returns the Set[String] of products available ont the Triggerise's shop
    */
-  val availableProducts: Set[String] = this.products.products.map(_.code.trim.toUpperCase).toSet
+  lazy val availableProducts: Set[String] = this.products.products.map(_.code.trim.toUpperCase).toSet
 
 
   /** Returns a predicate wether a products is available in Triggerise's shop
