@@ -66,6 +66,68 @@ class CheckoutSpec extends WordSpec with Matchers {
     ))
   )
 
+  val testCheckoutProductsEmpty: (Seq[Product], Map[String, Billing]) = (
+    Seq(),
+    Map()
+  )
+
+  val testCheckoutProducts1: (Seq[Product], Map[String, Billing]) = (
+    Seq(
+      Product(
+        code = "TICKET",
+        name = "Triggerise Ticket",
+        price = 5.00
+      )
+    ),
+    Map(
+      "TICKET" -> Regular(code = "TICKET")
+    )
+  )
+
+  val testCheckoutProducts2: (Seq[Product], Map[String, Billing]) = (
+    Seq(
+      Product(
+        code = "TICKET",
+        name = "Triggerise Ticket",
+        price = 5.00
+      ),
+      Product(
+        code = "HOODIE",
+        name = "Triggerise Hoodie",
+        price = 20.00
+      )
+    ),
+    Map(
+      "TICKET" -> Regular(code = "TICKET"),
+      "HOODIE" -> Regular(code = "HOODIE")
+    )
+  )
+
+  val testCheckoutProducts3: (Seq[Product], Map[String, Billing]) = (
+    Seq(
+      Product(
+        code = "TICKET",
+        name = "Triggerise Ticket",
+        price = 5.00
+      ),
+      Product(
+        code = "HOODIE",
+        name = "Triggerise Hoodie",
+        price = 20.00
+      ),
+      Product(
+        code = "HAT",
+        name = "Triggierse Hat",
+        price = 7.50
+      )
+    ),
+    Map(
+      "TICKET" -> Regular(code = "TICKET"),
+      "HOODIE" -> Regular(code = "  Hoodie"),
+      "HAT" -> Regular("hat   ")
+    )
+  )
+
   "convertConfigFileContentsToObject" should {
     "convert an existing json config file with no products to Products object with no products" in {
       val configuration: Configuration = Checkout.convertConfigFileContentsToObject(
@@ -159,26 +221,23 @@ class CheckoutSpec extends WordSpec with Matchers {
 
   "Checkout constructor" should {
     "Create a checkout object with no products from empty data file" in {
-      val configuration: Configuration = Checkout.convertConfigFileContentsToObject(
-        configurationFilePath = getClass.getResource("/products_empty.json").getPath)
-      val actual: (Seq[Product], BillingType) = (configuration.products, configuration.billingType)
-      val expected: (Seq[Product], BillingType) = testProductsEmpty
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath)
+      val actual: (Seq[Product], Map[String, Billing]) = (co.products, co.billingCodes)
+      val expected: (Seq[Product], Map[String, Billing]) = testCheckoutProductsEmpty
       assert(expected.equals(actual))
     }
 
     "Create a checkout object with 1 product from data file with 1 product" in {
-      val configuration: Configuration = Checkout.convertConfigFileContentsToObject(
-        configurationFilePath = getClass.getResource("/products_1.json").getPath)
-      val actual: (Seq[Product], BillingType) = (configuration.products, configuration.billingType)
-      val expected: (Seq[Product], BillingType) = testProducts1
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_1.json").getPath)
+      val actual: (Seq[Product], Map[String, Billing]) = (co.products, co.billingCodes)
+      val expected: (Seq[Product], Map[String, Billing]) =testCheckoutProducts1 
       assert(expected.equals(actual))
     }
 
     "Create a checkout object with 2 products from data file with 2 products" in {
-      val configuration: Configuration = Checkout.convertConfigFileContentsToObject(
-        configurationFilePath = getClass.getResource("/products_2.json").getPath)
-      val actual: (Seq[Product], BillingType) = (configuration.products, configuration.billingType)
-      val expected: (Seq[Product], BillingType) = testProducts2
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_2.json").getPath)
+      val actual: (Seq[Product], Map[String, Billing]) = (co.products, co.billingCodes)
+      val expected: (Seq[Product], Map[String, Billing]) =testCheckoutProducts2 
       assert(expected.equals(actual))
     }
 

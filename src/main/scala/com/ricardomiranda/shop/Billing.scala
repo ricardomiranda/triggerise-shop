@@ -32,7 +32,7 @@ object BillingFactory extends StrictLogging {
     billingType.trim.toLowerCase match {
       case "regular" =>
         logger.info(s"Code ${code} will be billed without any promotion")
-        Regular(code = code)
+        Regular(code = code.trim.toUpperCase)
       case _ =>
         logger.error(s"Code ${code} does not have a known billing type")
         sys.exit(1)
