@@ -8,9 +8,10 @@ import DefaultJsonProtocol._
 case class Configuration(billingType: BillingType, products: Seq[Product])
 case class Product(code: String, name: String, price: Double)
 case class BillingType(regular: Seq[String])
-
-
-case class Checkout(items: Seq[String] = Seq(), products: Seq[Product]) extends StrictLogging {
+   
+case class Checkout(
+  billingCodes: Map[String, Billing] = Map(), 
+  items: Seq[String] = Seq(), products: Seq[Product]) extends StrictLogging {
 
   /** Method to add an item to shopping list
    */
@@ -18,7 +19,7 @@ case class Checkout(items: Seq[String] = Seq(), products: Seq[Product]) extends 
     this.isValidProduct(item) match {
       case true =>
         logger.info(s"Item ${item} added to shopping kart")
-        this.copy(items = item.toUpperCase +: items)
+        this.copy(items = item.trim.toUpperCase +: items)
       case false =>
         logger.info(s"Item ${item} was not added to shopping kart")
         this
@@ -38,6 +39,18 @@ case class Checkout(items: Seq[String] = Seq(), products: Seq[Product]) extends 
    */
   def distinctItemsInShoppingKart: Set[String] = this.items.toSet
 
+  /** Method to get the tag price of a code
+   * 
+   * @param code
+   * @return Tag price of a code
+   */
+  def getCodePrice(code: String): Double = {
+    this.products.filter(_.code == code.trim.toUpperCase).headOption match {
+      case Some(x) => x.price
+      case None => 0.00
+    }
+  }
+
   /** Method to start a new bill
    *
    * @return Checkout Empties chopping kart so that a new billing process is possible
@@ -48,8 +61,19 @@ case class Checkout(items: Seq[String] = Seq(), products: Seq[Product]) extends 
   }
 
   /** Method to compute the account total
+   * 
+   * @return calcTotal
    */
-  // def total: Double = ???
+  def calcTotal: Double = {
+    this.distinctItemsInShoppingKart.map(x => this.billingCodes(x).computeBill(this.getCodePrice(code = x), this.countItemsSameCode(x))).sum
+  }
+
+  /** Method to print the account total
+   * 
+   */
+  def total: Unit = {
+    println(s"total: ${this.calcTotal%2.2}")
+  }
 
   /** Returns the Set[String] of products available ont the Triggerise's shop
    */
@@ -69,8 +93,13 @@ object Checkout extends StrictLogging {
     * @return Checkout
     */
   def apply(pricing_rules: String): Checkout = {
+    def readBillingCodes(billingType: BillingType): Map[String, Billing] = {
+      billingType.regular.map(x => (x, BillingFactory(code = x, billingType = "regular"))).toMap
+    }
+
     logger.info(s"Creating a Checkout object form config file - ${pricing_rules}")
-    new Checkout(products = this.convertConfigFileContentsToObject(configurationFilePath = pricing_rules).products)
+    val configuration: Configuration = this.convertConfigFileContentsToObject(configurationFilePath = pricing_rules)
+    new Checkout(billingCodes = readBillingCodes(billingType = configuration.billingType), products = configuration.products)
   }
 
   implicit val billingTypeFormat: RootJsonFormat[BillingType] = jsonFormat1(BillingType)
