@@ -39,6 +39,13 @@ case class Checkout(
    */
   def distinctItemsInShoppingKart: Set[String] = this.items.toSet
 
+  /** Method to get the tag price of a code
+   * 
+   * @param code
+   * @return Tag price of a code
+   */
+  def getCodePrice(code: String): Double = this.products.filter(_.code == code.trim.toUpperCase).head.price
+
   /** Method to start a new bill
    *
    * @return Checkout Empties chopping kart so that a new billing process is possible
@@ -49,8 +56,12 @@ case class Checkout(
   }
 
   /** Method to compute the account total
+   * 
+   * @return Total
    */
-  // def total: Double = ???
+  def total: Double = {
+    this.distinctItemsInShoppingKart.map(x => this.billingCodes(x).computeBill(this.getCodePrice(code = x), this.countItemsSameCode(x))).sum
+  }
 
   /** Returns the Set[String] of products available ont the Triggerise's shop
    */
