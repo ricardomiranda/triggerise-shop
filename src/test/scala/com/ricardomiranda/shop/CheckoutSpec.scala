@@ -327,4 +327,34 @@ class CheckoutSpec extends WordSpec with Matchers {
       assert(expected.equals(actual))
     }
   }
+
+  "Get Code Price" should {
+    "Be 0.00 if there are no Products and no code" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath)
+      val actual: Double = co.getCodePrice(code = "  ")
+      val expected: Double = 0.00
+      assert(expected.equals(actual))
+    }
+
+    "Be 0.00 if there are no Products" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath)
+      val actual: Double = co.getCodePrice(code = "hat  ")
+      val expected: Double = 0.00
+      assert(expected.equals(actual))
+    }
+
+    "Be 0.00 if code not found in Products List" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_1.json").getPath)
+      val actual: Double = co.getCodePrice(code = "hat  ")
+      val expected: Double = 0.00
+      assert(expected.equals(actual))
+    }
+
+    "Be 7.50 for HAT" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath)
+      val actual: Double = co.getCodePrice(code = "hat  ")
+      val expected: Double = 7.50
+      assert(expected.equals(actual))
+    }
+  }
 }
