@@ -15,7 +15,7 @@ case class Regular(code: String) extends Billing with StrictLogging {
 
   override def computeBill: (Double, Long) => Double = (quantity, price) => {
     val subtotal: Double = quantity * price
-    logger.info(s"Subtotal for code ${code} is ${subtotal}%2.2f Euro (${quantity} units at ${price}%2.2f Euro)")
+    logger.info(s"Subtotal for code ${code} is ${subtotal%2.2f} Euro (${quantity} units at ${price%2.2f} Euro)")
     subtotal
   }
 }

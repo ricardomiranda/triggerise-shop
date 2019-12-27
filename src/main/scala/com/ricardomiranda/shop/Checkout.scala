@@ -44,7 +44,12 @@ case class Checkout(
    * @param code
    * @return Tag price of a code
    */
-  def getCodePrice(code: String): Double = this.products.filter(_.code == code.trim.toUpperCase).head.price
+  def getCodePrice(code: String): Double = {
+    this.products.filter(_.code == code.trim.toUpperCase).headOption match {
+      case Some(x) => x.price
+      case None => 0.00
+    }
+  }
 
   /** Method to start a new bill
    *
@@ -57,10 +62,17 @@ case class Checkout(
 
   /** Method to compute the account total
    * 
-   * @return Total
+   * @return calcTotal
    */
-  def total: Double = {
+  def calcTotal: Double = {
     this.distinctItemsInShoppingKart.map(x => this.billingCodes(x).computeBill(this.getCodePrice(code = x), this.countItemsSameCode(x))).sum
+  }
+
+  /** Method to print the account total
+   * 
+   */
+  def total: Unit = {
+    println(s"total: ${this.calcTotal%2.2}")
   }
 
   /** Returns the Set[String] of products available ont the Triggerise's shop
