@@ -15,7 +15,7 @@ case class Regular(code: String) extends Billing with StrictLogging {
 
   override def computeBill: (Double, Long) => Double = (quantity, price) => {
     val subtotal: Double = quantity * price
-    logger.info(s"Subtotal for code ${code} is ${subtotal} Euro")
+    logger.info(s"Subtotal for code ${code} is ${subtotal}%2.2f Euro (${quantity} units at ${price}%2.2f Euro)")
     subtotal
   }
 }
@@ -29,7 +29,7 @@ object BillingFactory extends StrictLogging {
    * @return A Billing object
    */
   def apply(code: String, billingType: String): Billing = {
-    billingType match {
+    billingType.trim.toLowerCase match {
       case "regular" =>
         logger.info(s"Code ${code} will be billed without any promotion")
         Regular(code = code)
