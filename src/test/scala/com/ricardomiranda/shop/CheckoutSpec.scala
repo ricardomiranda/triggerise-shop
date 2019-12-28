@@ -541,4 +541,19 @@ class CheckoutSpec extends WordSpec with Matchers {
       assert(actual.isEmpty)
     }
   }
+
+  "Test available products" should {
+    "Be an empty Set if there are no products" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath).resetShppingKart
+      val actual: Set[String] = co.availableProducts
+      assert(actual.isEmpty)
+    }
+
+    "Set with HAT, HOODIE and TICKET if they are in config file" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("TICKET").scan("HOODIE").scan("HAT")
+      val actual: Set[String] = co.availableProducts
+      val expected: Set[String] = Set("HAT", "HOODIE", "TICKET")
+      assert(expected.equals(actual))
+    }
+  }
 }
