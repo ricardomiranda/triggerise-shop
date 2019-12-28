@@ -404,4 +404,62 @@ class CheckoutSpec extends WordSpec with Matchers {
       assert(expected.equals(actual))
     }
   }
+
+  "Count items with the same code" should {
+    "Be 0 if both products and items are empty" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath)
+      val actual: Long = co.countItemsSameCode("")
+      val expected: Long = 0
+      assert(expected.equals(actual))
+    }
+
+    "Be 0 if items is empty" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath)
+      val actual: Long = co.countItemsSameCode("")
+      val expected: Long = 0
+      assert(expected.equals(actual))
+    }
+
+    "Be 0 if products is empty" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath).scan("hat")
+      val actual: Long = co.countItemsSameCode("hat")
+      val expected: Long = 0
+      assert(expected.equals(actual))
+    }
+
+    "Be 0 if scanned item is not valid" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("PEN")
+      val actual: Long = co.countItemsSameCode("PEN")
+      val expected: Long = 0
+      assert(expected.equals(actual))
+    }
+
+    "Be 1 if 1 item is scanned" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT")
+      val actual: Long = co.countItemsSameCode("HAT")
+      val expected: Long = 1
+      assert(expected.equals(actual))
+    }
+
+    "Be 1 if 2 different items are scanned" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("TICKET")
+      val actual: Long = co.countItemsSameCode("HAT")
+      val expected: Long = 1
+      assert(expected.equals(actual))
+    }
+
+    "Be 2 if 2 items are scanned" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HAT")
+      val actual: Long = co.countItemsSameCode("HAT")
+      val expected: Long = 2
+      assert(expected.equals(actual))
+    }
+
+    "Be 3 if 3 HAT are scanned" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HAT").scan("HOODIE").scan("TICKET").scan("HAT")
+      val actual: Long = co.countItemsSameCode("HAT")
+      val expected: Long = 3
+      assert(expected.equals(actual))
+    }
+  }
 }
