@@ -1,6 +1,7 @@
 {
   "products": [],
   "billingType": {
-    "regular": []
+    "regular": [],
+    "twoForOne": []
   }
 }

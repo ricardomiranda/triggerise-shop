@@ -7,7 +7,7 @@ import DefaultJsonProtocol._
 
 case class Configuration(billingType: BillingType, products: Seq[Product])
 case class Product(code: String, name: String, price: Double)
-case class BillingType(regular: Seq[String])
+case class BillingType(regular: Seq[String], twoForOne: Seq[String])
    
 case class Checkout(
   billingCodes: Map[String, Billing] = Map(), 
@@ -99,7 +99,8 @@ object Checkout extends StrictLogging {
     */
   def apply(pricing_rules: String): Checkout = {
     def readBillingCodes(billingType: BillingType): Map[String, Billing] = {
-      billingType.regular.map(x => (x, BillingFactory(code = x, billingType = "regular"))).toMap
+      billingType.regular.map(x => (x, BillingFactory(code = x, billingType = "regular"))).toMap ++
+      billingType.twoForOne.map(x =>  (x, BillingFactory(code = x, billingType = "two_for_one"))).toMap
     }
 
     logger.info(s"Creating a Checkout object form config file - ${pricing_rules}")
@@ -107,7 +108,7 @@ object Checkout extends StrictLogging {
     new Checkout(billingCodes = readBillingCodes(billingType = configuration.billingType), products = configuration.products)
   }
 
-  implicit val billingTypeFormat: RootJsonFormat[BillingType] = jsonFormat1(BillingType)
+  implicit val billingTypeFormat: RootJsonFormat[BillingType] = jsonFormat2(BillingType)
   implicit val productFormat: RootJsonFormat[Product] = jsonFormat3(Product)
   implicit val configurationFormat: RootJsonFormat[Configuration] = jsonFormat2(Configuration)
 

@@ -13,8 +13,19 @@ sealed trait Billing {
 
 case class Regular(code: String) extends Billing with StrictLogging {
 
-  override def computeBill: (Double, Long) => Double = (quantity, price) => {
+  override def computeBill: (Double, Long) => Double = (price, quantity) => {
     val subtotal: Double = quantity * price
+    logger.info(s"Subtotal for code ${code} is ${subtotal%2.2f} Euro (${quantity} units at ${price%2.2f} Euro)")
+    subtotal
+  }
+}
+
+case class TwoForOne(code: String) extends Billing with StrictLogging {
+
+  override def computeBill: (Double, Long) => Double = (price, quantity) => {
+    val subtotal: Double = (quantity + 1) / 2 * price
+    // println(s"q: $quantity")
+    // println(s"p: $price")
     logger.info(s"Subtotal for code ${code} is ${subtotal%2.2f} Euro (${quantity} units at ${price%2.2f} Euro)")
     subtotal
   }
@@ -33,6 +44,9 @@ object BillingFactory extends StrictLogging {
       case "regular" =>
         logger.info(s"Code ${code} will be billed without any promotion")
         Regular(code = code.trim.toUpperCase)
+      case "two_for_one" =>
+        logger.info(s"Code ${code} will be billed 2-for-1 promotion")
+        TwoForOne(code = code.trim.toUpperCase)
       case _ =>
         logger.error(s"Code ${code} does not have a known billing type")
         sys.exit(1)

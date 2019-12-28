@@ -13,8 +13,10 @@
   ],
   "billingType": {
     "regular": [
-      "TICKET",
       "HOODIE"
+    ],
+    "twoForOne": [
+      "TICKET"
     ]
   }
 }
