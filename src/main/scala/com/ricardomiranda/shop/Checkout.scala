@@ -66,7 +66,9 @@ case class Checkout(
    * @return calcTotal
    */
   def calcTotal: Double = {
-    this.distinctItemsInShoppingKart.map(x => this.billingCodes(x).computeBill(this.getCodePrice(code = x), this.countItemsSameCode(x))).sum
+    val total: Double = this.distinctItemsInShoppingKart.map(x => this.billingCodes(x).computeBill(this.getCodePrice(code = x), this.countItemsSameCode(x))).sum
+    logger.info(s"Total is ${total%2.2} Euro")
+    total
   }
 
   /** Method to print the account total
