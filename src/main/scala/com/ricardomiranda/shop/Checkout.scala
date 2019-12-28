@@ -56,7 +56,7 @@ case class Checkout(
    *
    * @return Checkout Empties chopping kart so that a new billing process is possible
    */
-  def resetBasket: Checkout = {
+  def resetShppingKart: Checkout = {
     logger.info(s"New empty shopping kart")
     this.copy(items = Seq())
   }
@@ -71,9 +71,11 @@ case class Checkout(
 
   /** Method to print the account total
    * 
+   * @return Checkout Empties chopping kart so that a new billing process is possible
    */
-  def total: Unit = {
+  def total: Checkout = {
     println(s"total: ${this.calcTotal%2.2}")
+    this.resetShppingKart
   }
 
   /** Returns the Set[String] of products available ont the Triggerise's shop
