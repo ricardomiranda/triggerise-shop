@@ -11,7 +11,8 @@ case class BillingType(regular: Seq[String])
    
 case class Checkout(
   billingCodes: Map[String, Billing] = Map(), 
-  items: Seq[String] = Seq(), products: Seq[Product]) extends StrictLogging {
+  items: Seq[String] = Seq(), 
+  products: Seq[Product]) extends StrictLogging {
 
   /** Method to add an item to shopping list
    */

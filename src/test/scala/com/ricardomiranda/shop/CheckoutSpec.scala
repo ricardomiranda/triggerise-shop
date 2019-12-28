@@ -357,4 +357,51 @@ class CheckoutSpec extends WordSpec with Matchers {
       assert(expected.equals(actual))
     }
   }
+
+  "Checkout Scan" should {
+    "Not scan if Products and code are empty" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath)
+      val actual: Seq[String] = co.items
+      assert(actual.isEmpty)
+    }
+
+    "Not scan if there are Products but there is no scan" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath)
+      val actual: Seq[String] = co.items
+      assert(actual.isEmpty)
+    }
+
+    "Not scan if there are Products but code scan is empty" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("")
+      val actual: Seq[String] = co.items
+      assert(actual.isEmpty)
+    }
+
+    "Not scan if there are Products but code scan is not valid" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("PEN")
+      val actual: Seq[String] = co.items
+      assert(actual.isEmpty)
+    }
+
+    "2 HAT if there are Products and 2 HAT are scanned" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("hat")
+      val actual: Seq[String] = co.items
+      val expected: Seq[String] = Seq("HAT", "HAT")
+      assert(expected.equals(actual))
+    }
+
+    "1 HAT if there are Products and 1 HAT is scanned" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT")
+      val actual: Seq[String] = co.items
+      val expected: Seq[String] = Seq("HAT")
+      assert(expected.equals(actual))
+    }
+
+    "1 HAT and 1 HOODIE if there are Products and 1 HAT and 1 HOODIE are scanned" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HOODIE")
+      val actual: Seq[String] = co.items
+      val expected: Seq[String] = Seq("HOODIE", "HAT")
+      assert(expected.equals(actual))
+    }
+  }
 }
