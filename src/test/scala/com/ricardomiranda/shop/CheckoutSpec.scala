@@ -245,9 +245,6 @@ class CheckoutSpec extends WordSpec with Matchers {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_1.json").getPath)
       val actual: (Seq[Product], Map[String, Billing]) = (co.products, co.billingCodes)
       val expected: (Seq[Product], Map[String, Billing]) =testCheckoutProducts1
-      println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@2")
-      println(actual)
-      println(expected)
       assert(expected.equals(actual))
     }
 
@@ -316,31 +313,80 @@ class CheckoutSpec extends WordSpec with Matchers {
   }
 
   "Checkout Total" should {
-    "Be 0.00 Euro for an empty chopping kart" in {
+    "Be 0.00 Euro for an empty shopping kart" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath)
       val actual: Double = co.calcTotal
       val expected: Double = 0.00
       assert(expected.equals(actual))
     }
 
-    "Be 0.00 Euro for another empty chopping kart" in {
+    "Be 0.00 Euro for another empty shopping kart" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath)
       val actual: Double = co.calcTotal
       val expected: Double = 0.00
       assert(expected.equals(actual))
     }
 
-    "Be 7.50 Euro for a chopping kart with 1 hat" in {
+    "Be 7.50 Euro for a shopping kart with 1 hat" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("hat")
       val actual: Double = co.calcTotal
       val expected: Double = 7.50
       assert(expected.equals(actual))
     }
 
-    "Be 15.00 Euro for a chopping kart with 2 hats" in {
+    "Be 15.00 Euro for a shopping kart with 2 hats" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("hat").scan("  Hat ")
       val actual: Double = co.calcTotal
       val expected: Double = 15.00
+      assert(expected.equals(actual))
+    }
+ 
+    "Be 5.00 Euro for a shopping kart with 1 ticket" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("ticket ")
+      val actual: Double = co.calcTotal
+      val expected: Double = 5.00
+      assert(expected.equals(actual))
+    }
+ 
+    "Be 5.00 Euro for a shopping kart with 2 tickets" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("TICKET").scan("  TICKET ")
+      val actual: Double = co.calcTotal
+      val expected: Double = 5.00
+      assert(expected.equals(actual))
+    }
+ 
+    "Be 10.00 Euro for a shopping kart with 3 ticket" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("ticket ").scan("TICKET").scan("  TICKET ")
+      val actual: Double = co.calcTotal
+      val expected: Double = 10.00
+      assert(expected.equals(actual))
+    }
+ 
+    "Be 10.00 Euro for a shopping kart with 4 tickets" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("TICKET").scan("  TICKET ").scan("TICKET").scan("  TICKET ")
+      val actual: Double = co.calcTotal
+      val expected: Double = 10.00
+      assert(expected.equals(actual))
+    }
+ 
+    "Be 17.50 Euro for a shopping kart with 3 tickets and 1 hat" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("ticket ").scan("TICKET").scan("  TICKET ")
+      val actual: Double = co.calcTotal
+      val expected: Double = 17.50
+      assert(expected.equals(actual))
+    }
+ 
+    "Be 32.50 Euro for a shopping kart with ticket, hoodie, hat" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("TICKET").scan("  hoodie").scan("HAt")
+      val actual: Double = co.calcTotal
+      val expected: Double = 32.50
+      assert(expected.equals(actual))
+    }
+ 
+    "Be 25.00 Euro for a shopping kart with ticket, hoodie, ticket" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("TICKET").scan("  hoodie").scan("TICKET")
+      val actual: Double = co.calcTotal
+      val expected: Double = 25.00
       assert(expected.equals(actual))
     }
   }

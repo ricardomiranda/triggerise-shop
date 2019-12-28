@@ -13,7 +13,7 @@ sealed trait Billing {
 
 case class Regular(code: String) extends Billing with StrictLogging {
 
-  override def computeBill: (Double, Long) => Double = (quantity, price) => {
+  override def computeBill: (Double, Long) => Double = (price, quantity) => {
     val subtotal: Double = quantity * price
     logger.info(s"Subtotal for code ${code} is ${subtotal%2.2f} Euro (${quantity} units at ${price%2.2f} Euro)")
     subtotal
@@ -22,8 +22,10 @@ case class Regular(code: String) extends Billing with StrictLogging {
 
 case class TwoForOne(code: String) extends Billing with StrictLogging {
 
-  override def computeBill: (Double, Long) => Double = (quantity, price) => {
-    val subtotal: Double = (quantity / 2) * price
+  override def computeBill: (Double, Long) => Double = (price, quantity) => {
+    val subtotal: Double = (quantity + 1) / 2 * price
+    // println(s"q: $quantity")
+    // println(s"p: $price")
     logger.info(s"Subtotal for code ${code} is ${subtotal%2.2f} Euro (${quantity} units at ${price%2.2f} Euro)")
     subtotal
   }

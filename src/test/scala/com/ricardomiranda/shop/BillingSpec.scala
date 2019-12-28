@@ -116,7 +116,7 @@ class BillingFactorySpec extends WordSpec with Matchers {
       assert(expected.equals(actual))
     }
 
-    "Compute 10.00 if quanty is 2 and price 5.00" in {
+    "Compute 5.00 if quanty is 2 and price 5.00" in {
       val price: Double = 5.00
       val quantity: Long = 2
       val billing: Billing = BillingFactory(code = "PEN", billingType = "two_for_one")
