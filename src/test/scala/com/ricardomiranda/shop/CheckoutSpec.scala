@@ -462,4 +462,51 @@ class CheckoutSpec extends WordSpec with Matchers {
       assert(expected.equals(actual))
     }
   }
+
+  "Distinct itmes in shopping kart" should {
+    "Be an empty Set if items and products are empty" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath)
+      val actual: Set[String] = co.distinctItemsInShoppingKart
+      assert(actual.isEmpty)
+    }
+
+    "Be an empty Set if products is empty" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath).scan("HAT")
+      val actual: Set[String] = co.distinctItemsInShoppingKart
+      assert(actual.isEmpty)
+    }
+
+    "Be an empty Set if there are products but items is empty" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath)
+      val actual: Set[String] = co.distinctItemsInShoppingKart
+      assert(actual.isEmpty)
+    }
+
+    "Be an empty Set if there are products but scanned item is not valid" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("PEN")
+      val actual: Set[String] = co.distinctItemsInShoppingKart
+      assert(actual.isEmpty)
+    }
+
+    "Set with HAT if there are products and scanned item is HAT" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT")
+      val actual: Set[String] = co.distinctItemsInShoppingKart
+      val expected: Set[String] = Set("HAT")
+      assert(expected.equals(actual))
+    }
+
+    "Set with HAT if there are products and scanned items are HAT" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HAT").scan("HAT").scan("HAT")
+      val actual: Set[String] = co.distinctItemsInShoppingKart
+      val expected: Set[String] = Set("HAT")
+      assert(expected.equals(actual))
+    }
+
+    "Set with HAT, HOODIE and TICKET if they are scanned" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("TICKET").scan("HOODIE").scan("HAT")
+      val actual: Set[String] = co.distinctItemsInShoppingKart
+      val expected: Set[String] = Set("HAT", "HOODIE", "TICKET")
+      assert(expected.equals(actual))
+    }
+  }
 }
