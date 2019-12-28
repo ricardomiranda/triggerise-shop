@@ -509,4 +509,36 @@ class CheckoutSpec extends WordSpec with Matchers {
       assert(expected.equals(actual))
     }
   }
+
+  "Reset shopping kart" should {
+    "Return a Checkout object with empty items if there are no products and items" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath).resetShppingKart
+      val actual: Seq[String] = co.items
+      assert(actual.isEmpty)
+    }
+
+    "Return a Checkout object with empty items if there are items" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).resetShppingKart
+      val actual: Seq[String] = co.items
+      assert(actual.isEmpty)
+    }
+
+    "Return a Checkout object with empty items if there are no products" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath).scan("HAT").resetShppingKart
+      val actual: Seq[String] = co.items
+      assert(actual.isEmpty)
+    }
+
+    "Return a Checkout object with empty items if there are products and items" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").resetShppingKart
+      val actual: Seq[String] = co.items
+      assert(actual.isEmpty)
+    }
+
+    "Return a Checkout object with empty items if there are products and several items" in {
+      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HAT").scan("HOODIE").resetShppingKart
+      val actual: Seq[String] = co.items
+      assert(actual.isEmpty)
+    }
+  }
 }

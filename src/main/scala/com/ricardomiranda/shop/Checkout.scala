@@ -56,7 +56,7 @@ case class Checkout(
    *
    * @return Checkout Empties chopping kart so that a new billing process is possible
    */
-  def resetBasket: Checkout = {
+  def resetShppingKart: Checkout = {
     logger.info(s"New empty shopping kart")
     this.copy(items = Seq())
   }
