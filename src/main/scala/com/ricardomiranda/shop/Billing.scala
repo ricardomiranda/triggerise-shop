@@ -29,7 +29,6 @@ case class TwoForOne(code: String) extends Billing with StrictLogging {
   }
 }
 
-
 object BillingFactory extends StrictLogging {
 
   /** Method that dynamically creates an object of the intended Billing type

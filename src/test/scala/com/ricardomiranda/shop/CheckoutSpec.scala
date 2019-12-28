@@ -6,7 +6,10 @@ import org.scalatest.{Matchers, WordSpec}
 class CheckoutSpec extends WordSpec with Matchers {
   val testProductsEmpty: (Seq[Product], BillingType) = (
     Seq(),
-    BillingType(regular = Seq())
+    BillingType(
+      regular = Seq(),
+      twoForOne = Seq()
+      )
   )
 
   val testProducts1: (Seq[Product], BillingType) = (
@@ -17,9 +20,12 @@ class CheckoutSpec extends WordSpec with Matchers {
         price = 5.00
       )
     ),
-    BillingType(regular = Seq(
-      "TICKET",
-    ))
+    BillingType(
+      regular = Seq(),
+      twoForOne = Seq(
+        "TICKET"
+      )
+    )
   )
 
   val testProducts2: (Seq[Product], BillingType) = (
@@ -35,10 +41,14 @@ class CheckoutSpec extends WordSpec with Matchers {
         price = 20.00
       )
     ),
-    BillingType(regular = Seq(
-      "TICKET",
-      "HOODIE"
-    ))
+    BillingType(
+      regular = Seq(
+        "HOODIE"
+      ),
+      twoForOne = Seq(
+        "TICKET"
+      )
+    )
   )
 
   val testProducts3: (Seq[Product], BillingType) = (
@@ -59,11 +69,15 @@ class CheckoutSpec extends WordSpec with Matchers {
         price = 7.50
       )
     ),
-    BillingType(regular = Seq(
-      "TICKET",
-      "HOODIE",
-      "HAT"
-    ))
+    BillingType(
+      regular = Seq(
+        "HOODIE",
+        "HAT"
+      ),
+      twoForOne = Seq(
+        "TICKET"
+      )
+    )
   )
 
   val testCheckoutProductsEmpty: (Seq[Product], Map[String, Billing]) = (
@@ -80,7 +94,7 @@ class CheckoutSpec extends WordSpec with Matchers {
       )
     ),
     Map(
-      "TICKET" -> Regular(code = "TICKET")
+      "TICKET" -> TwoForOne(code = "TICKET")
     )
   )
 
@@ -98,7 +112,7 @@ class CheckoutSpec extends WordSpec with Matchers {
       )
     ),
     Map(
-      "TICKET" -> Regular(code = "TICKET"),
+      "TICKET" -> TwoForOne(code = "TICKET"),
       "HOODIE" -> Regular(code = "HOODIE")
     )
   )
@@ -122,11 +136,11 @@ class CheckoutSpec extends WordSpec with Matchers {
       )
     ),
     Map(
-      "TICKET" -> Regular(code = "TICKET"),
+      "TICKET" -> TwoForOne(code = "TICKET"),
       "HOODIE" -> Regular(code = "  Hoodie"),
       "HAT" -> Regular("hat   ")
     )
-  )
+  )  
 
   "convertConfigFileContentsToObject" should {
     "convert an existing json config file with no products to Products object with no products" in {
@@ -161,7 +175,7 @@ class CheckoutSpec extends WordSpec with Matchers {
       assert(expected.equals(actual))
     }
   }
-
+   
   "availableProducts" should {
     "create an empty set with a empty sequence of Products" in {
       val (products: Seq[Product], _) = testProductsEmpty
@@ -230,7 +244,10 @@ class CheckoutSpec extends WordSpec with Matchers {
     "Create a checkout object with 1 product from data file with 1 product" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_1.json").getPath)
       val actual: (Seq[Product], Map[String, Billing]) = (co.products, co.billingCodes)
-      val expected: (Seq[Product], Map[String, Billing]) =testCheckoutProducts1 
+      val expected: (Seq[Product], Map[String, Billing]) =testCheckoutProducts1
+      println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@2")
+      println(actual)
+      println(expected)
       assert(expected.equals(actual))
     }
 
@@ -555,5 +572,5 @@ class CheckoutSpec extends WordSpec with Matchers {
       val expected: Set[String] = Set("HAT", "HOODIE", "TICKET")
       assert(expected.equals(actual))
     }
-  }
+  } 
 }
