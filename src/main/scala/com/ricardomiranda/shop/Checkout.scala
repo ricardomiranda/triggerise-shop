@@ -67,7 +67,11 @@ case class Checkout(
    * @return calcTotal
    */
   def calcTotal: Double = {
-    val total: Double = this.distinctItemsInShoppingKart.map(x => this.billingCodes(x).computeBill(this.getCodePrice(code = x), this.countItemsSameCode(x))).sum
+    val total: Double = 
+      this.distinctItemsInShoppingKart.
+        map(x => this.billingCodes(x).computeBill(this.getCodePrice(code = x), this.countItemsSameCode(x))).
+        sum
+
     logger.info(s"Total is ${total%2.2} Euro")
     total
   }
@@ -102,12 +106,20 @@ object Checkout extends StrictLogging {
     def readBillingCodes(billingType: BillingType): Map[String, Billing] = {
       billingType.regular.map(x => (x, BillingFactory(billingType = "regular", code = x))).toMap ++
       billingType.twoForOne.map(x =>  (x, BillingFactory(billingType = "two_for_one", code = x))).toMap ++
-      billingType.xOrMore.map(x =>  (x.code, BillingFactory(billingType = "x_or_more", code = x.code, promoPrice = x.promoPrice, x = x.x))).toMap
+      billingType.xOrMore.
+        map(x =>  (
+          x.code, 
+          BillingFactory(billingType = "x_or_more", code = x.code, promoPrice = x.promoPrice, x = x.x)
+          )).
+        toMap
     }
   
     logger.info(s"Creating a Checkout object form config file - ${pricing_rules}")
     val configuration: Configuration = this.convertConfigFileContentsToObject(configurationFilePath = pricing_rules)
-    new Checkout(billingCodes = readBillingCodes(billingType = configuration.billingType), products = configuration.products)
+    new Checkout(
+      billingCodes = readBillingCodes(billingType = configuration.billingType), 
+      products = configuration.products
+      )
   }
 
   implicit val xOrMoreTypeFormat: RootJsonFormat[XOrMoreType] = jsonFormat3(XOrMoreType)
