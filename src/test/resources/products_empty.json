@@ -2,6 +2,7 @@
   "products": [],
   "billingType": {
     "regular": [],
-    "twoForOne": []
+    "twoForOne": [],
+    "xOrMore": []
   }
 }

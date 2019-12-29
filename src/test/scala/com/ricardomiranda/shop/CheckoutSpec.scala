@@ -8,13 +8,14 @@ class CheckoutSpec extends WordSpec with Matchers {
     Seq(),
     BillingType(
       regular = Seq(),
-      twoForOne = Seq()
+      twoForOne = Seq(),
+      xOrMore = Seq()
       )
   )
 
   val testProducts1: (Seq[Product], BillingType) = (
     Seq(
-      Product(
+      Product(        
         code = "TICKET",
         name = "Triggerise Ticket",
         price = 5.00
@@ -24,7 +25,8 @@ class CheckoutSpec extends WordSpec with Matchers {
       regular = Seq(),
       twoForOne = Seq(
         "TICKET"
-      )
+      ),
+      xOrMore = Seq()
     )
   )
 
@@ -42,11 +44,16 @@ class CheckoutSpec extends WordSpec with Matchers {
       )
     ),
     BillingType(
-      regular = Seq(
-        "HOODIE"
-      ),
+      regular = Seq(),
       twoForOne = Seq(
         "TICKET"
+      ),
+      xOrMore = Seq(
+        XOrMoreType(
+          code = "HOODIE",
+          promoPrice = 19.00,
+          x = 3
+        )
       )
     )
   )
@@ -71,11 +78,17 @@ class CheckoutSpec extends WordSpec with Matchers {
     ),
     BillingType(
       regular = Seq(
-        "HOODIE",
         "HAT"
       ),
       twoForOne = Seq(
         "TICKET"
+      ),
+      xOrMore = Seq(
+        XOrMoreType(
+          code = "HOODIE",
+          promoPrice = 19.00,
+          x = 3
+        )
       )
     )
   )
@@ -113,7 +126,7 @@ class CheckoutSpec extends WordSpec with Matchers {
     ),
     Map(
       "TICKET" -> TwoForOne(code = "TICKET"),
-      "HOODIE" -> Regular(code = "HOODIE")
+      "HOODIE" -> XOrMore(code = "HOODIE", promoPrice = 19.00, x = 3)
     )
   )
 
@@ -137,7 +150,7 @@ class CheckoutSpec extends WordSpec with Matchers {
     ),
     Map(
       "TICKET" -> TwoForOne(code = "TICKET"),
-      "HOODIE" -> Regular(code = "  Hoodie"),
+      "HOODIE" -> XOrMore(code = "HOODIE", promoPrice = 19.00, x = 3),
       "HAT" -> Regular("hat   ")
     )
   )  
@@ -335,7 +348,8 @@ class CheckoutSpec extends WordSpec with Matchers {
     }
 
     "Be 15.00 Euro for a shopping kart with 2 hats" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("hat").scan("  Hat ")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("hat").scan("  Hat ")
       val actual: Double = co.calcTotal
       val expected: Double = 15.00
       assert(expected.equals(actual))
@@ -349,44 +363,75 @@ class CheckoutSpec extends WordSpec with Matchers {
     }
  
     "Be 5.00 Euro for a shopping kart with 2 tickets" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("TICKET").scan("  TICKET ")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("TICKET").scan("  TICKET ")
       val actual: Double = co.calcTotal
       val expected: Double = 5.00
       assert(expected.equals(actual))
     }
  
     "Be 10.00 Euro for a shopping kart with 3 ticket" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("ticket ").scan("TICKET").scan("  TICKET ")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("ticket ").scan("TICKET").scan("  TICKET ")
       val actual: Double = co.calcTotal
       val expected: Double = 10.00
       assert(expected.equals(actual))
     }
  
     "Be 10.00 Euro for a shopping kart with 4 tickets" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("TICKET").scan("  TICKET ").scan("TICKET").scan("  TICKET ")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("TICKET").scan("  TICKET ").scan("TICKET").scan("  TICKET ")
       val actual: Double = co.calcTotal
       val expected: Double = 10.00
       assert(expected.equals(actual))
     }
  
     "Be 17.50 Euro for a shopping kart with 3 tickets and 1 hat" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("ticket ").scan("TICKET").scan("  TICKET ")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("HAT").scan("ticket ").scan("TICKET").scan("  TICKET ")
       val actual: Double = co.calcTotal
       val expected: Double = 17.50
       assert(expected.equals(actual))
     }
  
     "Be 32.50 Euro for a shopping kart with ticket, hoodie, hat" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("TICKET").scan("  hoodie").scan("HAt")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("TICKET").scan("  hoodie").scan("HAt")
       val actual: Double = co.calcTotal
       val expected: Double = 32.50
+      println(actual)
+      println(expected)
       assert(expected.equals(actual))
     }
  
     "Be 25.00 Euro for a shopping kart with ticket, hoodie, ticket" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("TICKET").scan("  hoodie").scan("TICKET")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("TICKET").scan("  hoodie").scan("TICKET")
       val actual: Double = co.calcTotal
       val expected: Double = 25.00
+      assert(expected.equals(actual))
+    }
+ 
+    "Be 81.00 Euro for a shopping kart with HOODIE, HOODIE, HOODIE, TICKET, HOODIE" in {
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("HOODIE").scan(" HOODIE ").scan("HOODIE").scan("TICKET").scan("   HOODIE  ")
+      val actual: Double = co.calcTotal
+      val expected: Double = 81.00
+      assert(expected.equals(actual))
+    }
+ 
+    "Be 74.50 Euro for a shopping kart with TICKET, HOODIE, TICKET, TICKET, HAT, HOODIE, HOODIE" in {
+      val co: Checkout =
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("TICKET").scan(" HOODIE ").scan("TICKET").scan("TICKET").scan(" HAT  ").scan("  HOODIE  ").scan("HOODIE")
+      val actual: Double = co.calcTotal
+      val expected: Double = 74.50
       assert(expected.equals(actual))
     }
   }
@@ -447,7 +492,8 @@ class CheckoutSpec extends WordSpec with Matchers {
     }
 
     "2 HAT if there are Products and 2 HAT are scanned" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("hat")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("hat")
       val actual: Seq[String] = co.items
       val expected: Seq[String] = Seq("HAT", "HAT")
       assert(expected.equals(actual))
@@ -461,7 +507,8 @@ class CheckoutSpec extends WordSpec with Matchers {
     }
 
     "1 HAT and 1 HOODIE if there are Products and 1 HAT and 1 HOODIE are scanned" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HOODIE")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HOODIE")
       val actual: Seq[String] = co.items
       val expected: Seq[String] = Seq("HOODIE", "HAT")
       assert(expected.equals(actual))
@@ -505,21 +552,25 @@ class CheckoutSpec extends WordSpec with Matchers {
     }
 
     "Be 1 if 2 different items are scanned" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("TICKET")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("TICKET")
       val actual: Long = co.countItemsSameCode("HAT")
       val expected: Long = 1
       assert(expected.equals(actual))
     }
 
     "Be 2 if 2 items are scanned" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HAT")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HAT")
       val actual: Long = co.countItemsSameCode("HAT")
       val expected: Long = 2
       assert(expected.equals(actual))
     }
 
     "Be 3 if 3 HAT are scanned" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HAT").scan("HOODIE").scan("TICKET").scan("HAT")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("HAT").scan("HAT").scan("HOODIE").scan("TICKET").scan("HAT")
       val actual: Long = co.countItemsSameCode("HAT")
       val expected: Long = 3
       assert(expected.equals(actual))
@@ -559,14 +610,18 @@ class CheckoutSpec extends WordSpec with Matchers {
     }
 
     "Set with HAT if there are products and scanned items are HAT" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HAT").scan("HAT").scan("HAT")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("HAT").scan("HAT").scan("HAT").scan("HAT")
       val actual: Set[String] = co.distinctItemsInShoppingKart
       val expected: Set[String] = Set("HAT")
       assert(expected.equals(actual))
     }
 
     "Set with HAT, HOODIE and TICKET if they are scanned" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("TICKET").scan("HOODIE").scan("HAT")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("HAT").scan("TICKET").scan("HOODIE").scan("HAT")
       val actual: Set[String] = co.distinctItemsInShoppingKart
       val expected: Set[String] = Set("HAT", "HOODIE", "TICKET")
       assert(expected.equals(actual))
@@ -587,19 +642,23 @@ class CheckoutSpec extends WordSpec with Matchers {
     }
 
     "Return a Checkout object with empty items if there are no products" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath).scan("HAT").resetShppingKart
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath).scan("HAT").resetShppingKart
       val actual: Seq[String] = co.items
       assert(actual.isEmpty)
     }
 
     "Return a Checkout object with empty items if there are products and items" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").resetShppingKart
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").resetShppingKart
       val actual: Seq[String] = co.items
       assert(actual.isEmpty)
     }
 
     "Return a Checkout object with empty items if there are products and several items" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HAT").scan("HOODIE").resetShppingKart
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("HAT").scan("HAT").scan("HOODIE").resetShppingKart
       val actual: Seq[String] = co.items
       assert(actual.isEmpty)
     }
@@ -613,7 +672,9 @@ class CheckoutSpec extends WordSpec with Matchers {
     }
 
     "Set with HAT, HOODIE and TICKET if they are in config file" in {
-      val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("TICKET").scan("HOODIE").scan("HAT")
+      val co: Checkout = 
+        Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
+          scan("HAT").scan("TICKET").scan("HOODIE").scan("HAT")
       val actual: Set[String] = co.availableProducts
       val expected: Set[String] = Set("HAT", "HOODIE", "TICKET")
       assert(expected.equals(actual))
