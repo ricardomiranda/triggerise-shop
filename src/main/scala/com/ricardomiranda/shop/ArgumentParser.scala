@@ -8,9 +8,9 @@ import scopt.OptionParser
 
 /** Case class for the config object.
   *
-  * @param triggeriseConfigurationFile The path to the json file with the configuration.
+  * @param pricing_rules The path to the json file with the configuration.
   */
-case class ArgumentParser(triggeriseConfigurationFile: String = "",
+case class ArgumentParser(pricing_rules: String = "",
                           databaseConfigurationFile: String = "",
                           endToEndTestConfigurationFilePath: String = ""
                          )
@@ -22,17 +22,17 @@ object ArgumentParser {
     new scopt.OptionParser[ArgumentParser](programName = "TriggeriseShop") {
       head(xs = "TriggeriseShop")
 
-      opt[String]('j', name = "triggeriseConfigurationFile")
+      opt[String]('j', name = "pricing_rules")
         .valueName("")
         .required()
-        .action((x, c) => c.copy(triggeriseConfigurationFile = x)
+        .action((x, c) => c.copy(pricing_rules = x)
         )
         .validate(x => if (validateConfigFileExistance(value = x)) {
           success
         } else {
           failure(msg = "Triggerise shop JSON file does not exist")
         })
-        .text("triggeriseConfigurationFile")
+        .text("pricing_rules")
     }
 
   /** Method to check if the json file received exists.
