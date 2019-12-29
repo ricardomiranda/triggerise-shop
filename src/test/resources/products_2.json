@@ -12,11 +12,16 @@
     }
   ],
   "billingType": {
-    "regular": [
-      "HOODIE"
-    ],
+    "regular": [],
     "twoForOne": [
       "TICKET"
+    ],
+    "xOrMore": [
+      {
+        "code": "HOODIE",
+        "x": 3,
+        "promoPrice": 19.00
+      }
     ]
   }
 }
