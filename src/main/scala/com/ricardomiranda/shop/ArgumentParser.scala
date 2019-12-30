@@ -32,7 +32,7 @@ object ArgumentParser {
         } else {
           failure(msg = "Triggerise shop JSON file does not exist")
         })
-        .text("pricing_rules")
+        .text("Configuration JSON file")
     }
 
   /** Method to check if the json file received exists.
