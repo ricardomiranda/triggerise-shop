@@ -9,7 +9,7 @@ object Main extends App with StrictLogging {
 
   def help: Unit = println("""Menu options are:
                               | 1 -> Calc new shopping kart
-                              | 2 -> Exit program""".stripMargin)
+                              | 2 -> Exit program\n""".stripMargin)
   
   def choice: Long = 
         allCatch.opt { readLine("What do you want to do now?\n").toLong }.getOrElse(3)
