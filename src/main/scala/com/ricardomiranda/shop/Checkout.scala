@@ -72,7 +72,7 @@ case class Checkout(
         map(x => this.billingCodes(x).computeBill(this.getCodePrice(code = x), this.countItemsSameCode(x))).
         sum
 
-    logger.info(s"Total is ${total%2.2} Euro")
+    logger.info(f"Total is ${total}%.2f Euro")
     total
   }
 
@@ -80,10 +80,7 @@ case class Checkout(
    * 
    * @return Checkout Empties chopping kart so that a new billing process is possible
    */
-  def total: Checkout = {
-    println(s"total: ${this.calcTotal%2.2}")
-    this.resetShppingKart
-  }
+  def total: Unit = println(f"total: ${this.calcTotal}%.2f")
 
   /** Returns the Set[String] of products available ont the Triggerise's shop
    */
