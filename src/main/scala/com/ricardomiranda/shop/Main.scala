@@ -9,17 +9,20 @@ object Main extends App with StrictLogging {
 
   def help: Unit = println("""Menu options are:
                               | 1 -> Calc new shopping kart
-                              | 2 -> Exit program\n""".stripMargin)
+                              | 2 -> Exit program
+                              | 3 -> This help\n""".stripMargin)
   
   def choice: Long = 
-        allCatch.opt { readLine("What do you want to do now?\n").toLong }.getOrElse(3)
+    allCatch.
+      opt { readLine("What do you want to do now? (1 -> Continue, 2 -> Exit, 3 -> Help)\n").toLong }.
+      getOrElse(3)
 
   @tailrec
   def menu(co: Checkout, input: Long): Unit = input match {
     case 1 => 
-      readLine("Please enter list of products separated by sapces.\nitems: ").
+      readLine("Please enter list of products separated by commas.\nitems: ").
         trim.
-        split(" ").
+        split(",").
         foldLeft(co) { (acc, x) => acc.scan(x) }.
         total
 
