@@ -5,7 +5,7 @@ import scala.annotation.tailrec
 import util.control.Exception._
 
 object Main extends App with StrictLogging {
-  logger.info("Starting progrm Triggerise Shop")
+  logger.info("Starting program Triggerise Shop")
 
   def help: Unit = println("""Menu options are:
                               | 1 -> Calc new shopping kart
