@@ -282,7 +282,7 @@ class CheckoutSpec extends WordSpec with Matchers {
       val item: String = ""
       val (products: Seq[Product], _) = testProductsEmpty
       val checkout: Checkout = Checkout(products = products).scan(item)
-      val actual: Seq[String] = checkout.items
+      val actual: Seq[String] = checkout.shoppingKart
       val expected: Seq[String] = Seq()
       assert(expected.equals(actual))
     }
@@ -291,7 +291,7 @@ class CheckoutSpec extends WordSpec with Matchers {
       val item: String = "HAT"
       val (products: Seq[Product], _) = testProductsEmpty
       val checkout: Checkout = Checkout(products = products).scan(item)
-      val actual: Seq[String] = checkout.items
+      val actual: Seq[String] = checkout.shoppingKart
       val expected: Seq[String] = Seq()
       assert(expected.equals(actual))
     }
@@ -300,7 +300,7 @@ class CheckoutSpec extends WordSpec with Matchers {
       val item: String = "TICKET"
       val (products: Seq[Product], _) = testProducts1
       val checkout: Checkout = Checkout(products = products).scan(item)
-      val actual: Seq[String] = checkout.items
+      val actual: Seq[String] = checkout.shoppingKart
       val expected: Seq[String] = Seq(item)
       assert(expected.equals(actual))
     }
@@ -309,7 +309,7 @@ class CheckoutSpec extends WordSpec with Matchers {
       val item: String = "HAT"
       val (products: Seq[Product], _) = testProducts1
       val checkout: Checkout = Checkout(products = products).scan(item)
-      val actual: Seq[String] = checkout.items
+      val actual: Seq[String] = checkout.shoppingKart
       val expected: Seq[String] = Seq()
       assert(expected.equals(actual))
     }
@@ -319,7 +319,7 @@ class CheckoutSpec extends WordSpec with Matchers {
       val hat: String = "HAT"
       val (products: Seq[Product], _) = testProducts3
       val checkout: Checkout = Checkout(products = products).scan(ticket).scan(hat).scan(hat).scan(ticket)
-      val actual: Seq[String] = checkout.items
+      val actual: Seq[String] = checkout.shoppingKart
       val expected: Seq[String] = Seq(ticket, hat, hat, ticket)
       assert(expected.equals(actual))
     }
@@ -469,39 +469,39 @@ class CheckoutSpec extends WordSpec with Matchers {
   "Checkout Scan" should {
     "Not scan if Products and code are empty" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath)
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       assert(actual.isEmpty)
     }
 
     "Not scan if there are Products but there is no scan" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath)
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       assert(actual.isEmpty)
     }
 
     "Not scan if there are Products but code scan is empty" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("")
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       assert(actual.isEmpty)
     }
 
     "Not scan if there are Products but code scan is not valid" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("PEN")
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       assert(actual.isEmpty)
     }
 
     "2 HAT if there are Products and 2 HAT are scanned" in {
       val co: Checkout = 
         Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("hat")
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       val expected: Seq[String] = Seq("HAT", "HAT")
       assert(expected.equals(actual))
     }
 
     "1 HAT if there are Products and 1 HAT is scanned" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT")
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       val expected: Seq[String] = Seq("HAT")
       assert(expected.equals(actual))
     }
@@ -509,7 +509,7 @@ class CheckoutSpec extends WordSpec with Matchers {
     "1 HAT and 1 HOODIE if there are Products and 1 HAT and 1 HOODIE are scanned" in {
       val co: Checkout = 
         Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").scan("HOODIE")
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       val expected: Seq[String] = Seq("HOODIE", "HAT")
       assert(expected.equals(actual))
     }
@@ -577,7 +577,7 @@ class CheckoutSpec extends WordSpec with Matchers {
     }
   }
 
-  "Distinct itmes in shopping kart" should {
+  "Distinct items in shopping kart" should {
     "Be an empty Set if items and products are empty" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath)
       val actual: Set[String] = co.distinctItemsInShoppingKart
@@ -590,7 +590,7 @@ class CheckoutSpec extends WordSpec with Matchers {
       assert(actual.isEmpty)
     }
 
-    "Be an empty Set if there are products but items is empty" in {
+    "Be an empty Set if there are products but shopiing kart is empty" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath)
       val actual: Set[String] = co.distinctItemsInShoppingKart
       assert(actual.isEmpty)
@@ -631,27 +631,27 @@ class CheckoutSpec extends WordSpec with Matchers {
   "Reset shopping kart" should {
     "Return a Checkout object with empty items if there are no products and items" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath).resetShppingKart
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       assert(actual.isEmpty)
     }
 
     "Return a Checkout object with empty items if there are items" in {
       val co: Checkout = Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).resetShppingKart
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       assert(actual.isEmpty)
     }
 
     "Return a Checkout object with empty items if there are no products" in {
       val co: Checkout = 
         Checkout(pricing_rules = getClass.getResource("/products_empty.json").getPath).scan("HAT").resetShppingKart
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       assert(actual.isEmpty)
     }
 
     "Return a Checkout object with empty items if there are products and items" in {
       val co: Checkout = 
         Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).scan("HAT").resetShppingKart
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       assert(actual.isEmpty)
     }
 
@@ -659,7 +659,7 @@ class CheckoutSpec extends WordSpec with Matchers {
       val co: Checkout = 
         Checkout(pricing_rules = getClass.getResource("/products_3.json").getPath).
           scan("HAT").scan("HAT").scan("HOODIE").resetShppingKart
-      val actual: Seq[String] = co.items
+      val actual: Seq[String] = co.shoppingKart
       assert(actual.isEmpty)
     }
   }

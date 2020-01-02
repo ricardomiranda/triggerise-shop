@@ -17,11 +17,11 @@ object Main extends App with StrictLogging {
   @tailrec
   def menu(co: Checkout, input: Long): Unit = input match {
     case 1 => 
-      readLine("Please enter list of products separated by sapces.\nitems: ").
-        trim.
-        split(" ").
-        foldLeft(co) { (acc, x) => acc.scan(x) }.
-        total
+      readLine("Please enter list of products separated by sapces.\nitems: ")
+        .trim
+        .split(" ")
+        .foldLeft(co) { (acc, x) => acc.scan(x) }
+        .total
 
       menu(co = co.resetShppingKart, input = choice)
     case 2 => 
