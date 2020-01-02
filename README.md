@@ -12,7 +12,7 @@ Run instructions:
 ```bash
 sbt assembly
 docker build -f ./Dockerfile . -t shop
-docker run -v ~/shop:/opt/app/triggerise -it shop
+docker run -it shop
 ```
 
 ## Test program
