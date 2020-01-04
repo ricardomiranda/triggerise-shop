@@ -9,9 +9,8 @@
 dist/*
 target/
 project/*
-project/build.properties
+!project/build.properties
 !project/site.sbt
-project/r
 lib_managed/
 src_managed/
 project/boot/
@@ -27,12 +26,6 @@ project/plugins/project/
 # ensime
 .ensime
 .ensime_cache/
-
-# codacy
-src/main/resources/
-
-# large data file
-src/main/resources/yellow_tripdata_2018-01.csv
 
 # results
 longest_trips_per_day.csv

@@ -1,0 +1,34 @@
+{
+  "products": [
+    {
+      "code": "TICKET",
+      "name": "Triggerise Ticket",
+      "price": 5.00
+    },
+    {
+      "code": "HOODIE",
+      "name": "Triggerise Hoodie",
+      "price": 20.00
+    },
+    {
+      "code": "HAT",
+      "name": "Triggierse Hat",
+      "price": 7.50
+    }
+  ],
+  "billingType": {
+    "regular": [
+      "HAT"
+    ],
+    "twoForOne": [
+      "TICKET"
+    ],
+    "xOrMore": [
+      {
+        "code": "HOODIE",
+        "x": 3,
+        "promoPrice": 19.00
+      }
+    ]
+  }
+}
